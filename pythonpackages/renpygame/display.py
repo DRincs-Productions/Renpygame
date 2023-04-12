@@ -1,5 +1,4 @@
 from typing import Any, Optional, Union
-from pythonpackages.renpygame.rect import Rect
 import renpy.exports as renpy
 from pygame_sdl2.display import *
 
@@ -25,7 +24,7 @@ class MainSurface(renpy.Displayable, pygame.Surface):
         pygame.Surface.__init__(self, size, flags, depth, masks)
 
         self.size = size
-        self.render = renpy.Render(size[0], size[1])
+        self.renderMainSurface = renpy.Render(size[0], size[1])
 
     def blit(
         self,
@@ -33,10 +32,13 @@ class MainSurface(renpy.Displayable, pygame.Surface):
         dest: tuple[int, int],
         area: Optional[tuple[int, int]] = None,
         special_flags: int = 0
-    ) -> Rect:
+    ):
         # renpy.show_screen(
         #     "rect", left=dest[0], top=dest[1], width=self.size[0], height=self.size[1])
-        return self.render.blit(source, dest)
+        return self.renderMainSurface.blit(source, (0, 0))
+
+    def render(self, width, height, st, at) -> renpy.Render:
+        return self.renderMainSurface
 
 
 def set_mode(size: tuple[int, int] = (0, 0), flags: int = 0, depth: int = 0, display: int = 0, vsync: int = 0) -> MainSurface:
