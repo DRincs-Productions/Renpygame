@@ -6,7 +6,7 @@ from pygame_sdl2.display import *
 import pythonpackages.renpygame.pygame as pygame
 
 
-class Surface(renpy.Displayable, pygame.Surface):
+class MainSurface(renpy.Displayable, pygame.Surface):
     """pygame: https://www.pygame.org/docs/ref/surface.html
     pygame_sdl2: https://github.com/renpy/pygame_sdl2/blob/48e9c45667152a4ccf98d6d9251eeb3c8858b5f1/src/pygame_sdl2/surface.pyx#L53"""
 
@@ -19,12 +19,13 @@ class Surface(renpy.Displayable, pygame.Surface):
         **kwargs
     ):
         # renpy.Displayable init
-        super(Surface, self).__init__(**kwargs)
+        super(MainSurface, self).__init__(**kwargs)
 
         # pygame.Surface init
         pygame.Surface.__init__(self, size, flags, depth, masks)
 
         self.size = size
+        self.render = renpy.Render(size[0], size[1])
 
     def blit(
         self,
@@ -33,15 +34,15 @@ class Surface(renpy.Displayable, pygame.Surface):
         area: Optional[tuple[int, int]] = None,
         special_flags: int = 0
     ) -> Rect:
-        renpy.show_screen(
-            "rect", left=dest[0], top=dest[1], width=self.size[0], height=self.size[1], img="background.gif")
-        return pygame.Surface.blit(self, source, dest, area, special_flags)
+        # renpy.show_screen(
+        #     "rect", left=dest[0], top=dest[1], width=self.size[0], height=self.size[1])
+        return self.render.blit(source, dest)
 
 
-def set_mode(size: tuple[int, int] = (0, 0), flags: int = 0, depth: int = 0, display: int = 0, vsync: int = 0) -> Surface:
+def set_mode(size: tuple[int, int] = (0, 0), flags: int = 0, depth: int = 0, display: int = 0, vsync: int = 0) -> MainSurface:
     """If it is commented out it will replace the renpy screen creating an error when returning to renpy. https://www.pygame.org/docs/ref/display.html#pygame.display.set_mode"""
     # * It has the job of replacing the original so nothing happens
-    return Surface(size, flags, depth)
+    return MainSurface(size, flags, depth)
 
 
 def mode_ok(size: tuple[int, int], flags: int = 0, depth: int = 0, display: int = 0) -> int:
