@@ -27,7 +27,21 @@ class RenpyGameSurface(renpy.Displayable):
         return self.renderMainSurface.blit(source, (0, 0))
 
     def render(self, width, height, st, at) -> renpy.Render:
-        return self.renderMainSurface
+        # Create the render we will return.
+        render = renpy.Render(width, width)
+
+        # Create a render from the child.
+        child_render = renpy.render(renpy.displayable(
+            "background.gif"), width, height, st, at)
+
+        # Get the size of the child.
+        self.width, self.height = child_render.get_size()
+
+        # Blit (draw) the child's render to our render.
+        render.blit(child_render, (self.left, self.top))
+
+        # Return the render.
+        return render
 
 
 def set_mode(size: tuple[int, int] = (0, 0), flags: int = 0, depth: int = 0, display: int = 0, vsync: int = 0) -> RenpyGameSurface:
