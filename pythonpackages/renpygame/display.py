@@ -5,13 +5,13 @@ from pygame_sdl2.display import *
 import pythonpackages.renpygame.pygame as pygame
 
 
-class MainSurface(renpy.Displayable):
+class RenpyGameSurface(renpy.Displayable):
     """pygame: https://www.pygame.org/docs/ref/surface.html
     pygame_sdl2: https://github.com/renpy/pygame_sdl2/blob/48e9c45667152a4ccf98d6d9251eeb3c8858b5f1/src/pygame_sdl2/surface.pyx#L53"""
 
     def __init__(self, **kwargs):
         # renpy.Displayable init
-        super(MainSurface, self).__init__(**kwargs)
+        super(RenpyGameSurface, self).__init__(**kwargs)
 
         self.renderMainSurface = renpy.Render(300, 300)
 
@@ -30,10 +30,10 @@ class MainSurface(renpy.Displayable):
         return self.renderMainSurface
 
 
-def set_mode(size: tuple[int, int] = (0, 0), flags: int = 0, depth: int = 0, display: int = 0, vsync: int = 0) -> MainSurface:
+def set_mode(size: tuple[int, int] = (0, 0), flags: int = 0, depth: int = 0, display: int = 0, vsync: int = 0) -> RenpyGameSurface:
     """If it is commented out it will replace the renpy screen creating an error when returning to renpy. https://www.pygame.org/docs/ref/display.html#pygame.display.set_mode"""
     # * It has the job of replacing the original so nothing happens
-    surface = MainSurface()
+    surface = RenpyGameSurface()
     renpy.show_screen("renpygame_surface", surface=surface)
     return surface
 
