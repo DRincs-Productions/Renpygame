@@ -3,6 +3,7 @@ import renpy.exports as renpy
 from pygame_sdl2.display import *
 
 import pythonpackages.renpygame.pygame as pygame
+import pythonpackages.renpygame.image as my_image
 
 
 class RenpyGameSurface(renpy.Displayable):
@@ -17,8 +18,8 @@ class RenpyGameSurface(renpy.Displayable):
         render = renpy.Render(width, width)
 
         # Create a render from the child.
-        child_render = renpy.render(renpy.displayable(
-            "alien3.gif"), width, height, st, at)
+        # child_render = renpy.render(renpy.displayable(
+        #     "background.gif"), width, height, st, at)
 
         file = renpy.open_file("images/background.gif")
         image = pygame.image.load(file)
@@ -27,13 +28,13 @@ class RenpyGameSurface(renpy.Displayable):
 
         background = pygame.Surface((300, 300))
         background.blit(bgdtile, (300, 300))
-        child_render.blit(background, (300, 300))
+        # child_render.blit(background, (300, 300))
 
         # Get the size of the child.
         # self.width, self.height = child_render.get_size()
 
         # Blit (draw) the child's render to our render.
-        render.blit(child_render, (0, 0))
+        render.blit(background, (0, 0))
 
         # Return the render.
         return render
