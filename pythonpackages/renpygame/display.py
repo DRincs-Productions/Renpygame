@@ -38,7 +38,7 @@ class RenpyGameSurface(renpy.Displayable):
         self.width, self.height = child_render.get_size()
 
         # Blit (draw) the child's render to our render.
-        render.blit(child_render, (self.left, self.top))
+        render.blit(child_render, (0, 0))
 
         # Return the render.
         return render
