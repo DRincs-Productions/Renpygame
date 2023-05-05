@@ -94,6 +94,7 @@ class RenpyGameByTimer(renpy.Displayable):
         self.event_lambda = event_lambda
         self.child_render = None
         self.current_frame_number = 0
+        self._delay_paused = None
 
         # renpy.Displayable init
         super(RenpyGameByTimer, self).__init__(**kwargs)
@@ -174,7 +175,8 @@ class RenpyGameByTimer(renpy.Displayable):
         if self.delay is not None:
             renpy.redraw(self, delay)
         elif check_game_end:
-            self.game_end()
+            if not self.is_in_pause:
+                self.game_end()
 
     def game_end(self):
         print("Renpy Game End")
@@ -205,6 +207,27 @@ class RenpyGameByTimer(renpy.Displayable):
         )
         return main_render(self.child_render, width, height)
 
+    def set_pause(self, pause: bool):
+        if pause:
+            if self.delay and self._delay_paused is None:
+                print("Renpy Game Pause")
+                self._delay_paused = self.delay
+                self.delay = None
+            else:
+                print("WARNING: Renpy Game Pause, but delay is None")
+        else:
+            if self._delay_paused is not None:
+                print("Renpy Game Unpause")
+                self.delay = self._delay_paused
+                self._delay_paused = None
+                self.start_redraw_timer(check_game_end=False)
+            else:
+                print("WARNING: Renpy Game Unpause, but delay is None")
+
+    @property
+    def is_in_pause(self) -> bool:
+        return self._delay_paused is not None
+
     def event(self, ev: EventType, x: int, y: int, st: float):
         """pygame_sdl2: https://github.com/renpy/pygame_sdl2/blob/master/src/pygame_sdl2/event.pyx
         config.keymap: https://www.renpy.org/doc/html/config.html#var-config.keymap
@@ -212,7 +235,11 @@ class RenpyGameByTimer(renpy.Displayable):
         """
         if pygame.WINDOWEVENT == ev.type:
             self.start_redraw_timer(check_game_end=False)
-        if 32768 == ev.type:  # 32768 is the event type for pause menu
-            self.reset_game()
+        elif 32768 == ev.type:  # 32768 is the event type for pause menu
+            self.set_pause(False)
+        elif (
+            ev.type == pygame.MOUSEBUTTONDOWN == ev.type and ev.button == 3
+        ):  # 1025 is the event type for pause menu
+            self.set_pause(True)
         if self.event_lambda is not None:
             return self.event_lambda(ev, x, y, st)
