@@ -35,6 +35,33 @@ renpy's pros:
 
 ## Instructions
 
+**[Wiki](https://github.com/DRincs-Productions/Renpygame/wiki)**
+
+## Insert Toolkit in your project
+
+I recommend the following ways to include it in your project:
+
+- [**Pull branch**](#pull-branch) (to **insert** it into your game and **update** it easily)
+- [**Fork**](https://docs.github.com/en/get-started/quickstart/fork-a-repo) (to improve the repo or create a Toolkit based on mine)
+- [Manually](https://github.com/DRincs-Productions/DRincs-Productions/releases) (not recommended)
+
+### Pull branch
+
+To **insert** or **update** the Toolkit in your repo with Pull branch I recommend the following procedure:
+
+(only if you want to insert the repo) Create a new empty branch, in the example I'll use **renpygame**
+
+```shell
+git checkout -b renpygame
+git checkout renpygame
+git config pull.rebase false
+git pull https://github.com/DRincs-Productions/Renpygame.git tool-only --allow-unrelated-histories
+git submodule update --remote
+
+```
+
+At the end make a merge inside the arm of the project.
+
 ## Supported Modules
 
 A good number of functions should already work even if they have not yet been tested
