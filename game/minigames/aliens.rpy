@@ -18,8 +18,8 @@ label aliens_retry:
 
     $ score = aliens.main()
 
-    # This eats up any remaining keypresses.
-    $ renpy.pause(.1)
+    # # This eats up any remaining keypresses.
+    # $ renpy.pause(.1)
     
     e "You shot down [score] aliens."
 
