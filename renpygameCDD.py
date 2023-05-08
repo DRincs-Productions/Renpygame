@@ -130,7 +130,7 @@ class RenpyGameByTimer(renpy.Displayable):
         event_lambda: Optional[Callable[[EventType, int, int, float], Any]] = None,
         delay: float = 0.05,
         end_game_frame: Optional[
-            Callable[[Render, float, float, Optional[float], int], None]
+            Callable[[Render, float, float, float, int], None]
         ] = None,
         **kwargs,
     ):
@@ -227,14 +227,14 @@ class RenpyGameByTimer(renpy.Displayable):
     @property
     def end_game_frame(
         self,
-    ) -> Optional[Callable[[Render, float, float, Optional[float], int], None]]:
+    ) -> Optional[Callable[[Render, float, float, float, int], None]]:
         """wiki:"""
         return self._end_game_frame
 
     @end_game_frame.setter
     def end_game_frame(
         self,
-        value: Optional[Callable[[Render, float, float, Optional[float], int], None]],
+        value: Optional[Callable[[Render, float, float, float, int], None]],
     ):
         self._end_game_frame = value
 
@@ -293,9 +293,13 @@ class RenpyGameByTimer(renpy.Displayable):
         """
 
         if self.is_game_end_menu:
-            self.end_game_frame(
-                self.child_render, 0, 0, self.delay, self.current_frame_number
-            )
+            if self.end_game_frame is not None:
+                self.end_game_frame(
+                    self.child_render, 0, 0, self.start_delay, self.current_frame_number
+                )
+            else:
+                print("Error: end_game_frame is None")
+                self.quit()
 
         if self.current_frame_number % 3600 == 0:
             free_memory()
