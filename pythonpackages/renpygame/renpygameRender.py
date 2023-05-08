@@ -219,7 +219,7 @@ class Render(renpy.Render):
     def fill(self, color):
         return super().fill(color)
 
-    def canvas(self):
+    def canvas(self) -> renpy.display.render.Canvas:
         return super().canvas()
 
     def screen_rect(self, sx: float, sy: float, transform: list[list[int]]):
