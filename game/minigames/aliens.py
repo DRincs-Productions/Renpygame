@@ -340,7 +340,7 @@ def my_game_logic(
     cur_screen: pygame.Surface,
     st: float,
     at: float,
-    next_frame_time: float,
+    next_frame_time: Optional[float],
     current_frame_number: int,
 ) -> Optional[float]:
     if sh.player.alive():
