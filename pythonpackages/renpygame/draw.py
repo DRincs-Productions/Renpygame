@@ -21,13 +21,15 @@ def rect(
 ) -> pygame.Rect:
     """https://www.pygame.org/docs/ref/draw.html#pygame.draw.rect"""
     canvas = surface.canvas()
-    return canvas.rect(color, rect, width)
+    canvas.rect(color, rect, width)
+    return canvas.get_surface().get_rect()
 
 
 def polygon(surface, color, points, width=0) -> pygame.Rect:
     """https://www.pygame.org/docs/ref/draw.html#pygame.draw.polygon"""
     canvas = surface.canvas()
-    return canvas.polygon(color, points, width)
+    canvas.polygon(color, points, width)
+    return canvas.get_surface().get_rect()
 
 
 def circle(
@@ -43,40 +45,47 @@ def circle(
 ) -> pygame.Rect:
     """https://www.pygame.org/docs/ref/draw.html#pygame.draw.circle"""
     canvas = surface.canvas()
-    return canvas.circle(color, center, radius, width)
+    canvas.circle(color, center, radius, width)
+    return canvas.get_surface().get_rect()
 
 
 def ellipse(surface, color, rect, width=0) -> pygame.Rect:
     """https://www.pygame.org/docs/ref/draw.html#pygame.draw.ellipse"""
     canvas = surface.canvas()
-    return canvas.ellipse(color, rect, width)
+    canvas.ellipse(color, rect, width)
+    return canvas.get_surface().get_rect()
 
 
 def arc(surface, color, rect, start_angle, stop_angle, width=1) -> pygame.Rect:
     """https://www.pygame.org/docs/ref/draw.html#pygame.draw.arc"""
     canvas = surface.canvas()
-    return canvas.arc(color, rect, start_angle, stop_angle, width)
+    canvas.arc(color, rect, start_angle, stop_angle, width)
+    return canvas.get_surface().get_rect()
 
 
 def line(surface, color, start_pos, end_pos, width=1) -> pygame.Rect:
     """https://www.pygame.org/docs/ref/draw.html#pygame.draw.line"""
     canvas = surface.canvas()
-    return canvas.line(color, start_pos, end_pos, width)
+    canvas.line(color, start_pos, end_pos, width)
+    return canvas.get_surface().get_rect()
 
 
 def lines(surface, color, closed, pointlist, width=1) -> pygame.Rect:
     """https://www.pygame.org/docs/ref/draw.html#pygame.draw.lines"""
     canvas = surface.canvas()
-    return canvas.lines(color, closed, pointlist, width)
+    canvas.lines(color, closed, pointlist, width)
+    return canvas.get_surface().get_rect()
 
 
 def aaline(surface, color, startpos, endpos, blend=1) -> pygame.Rect:
     """https://www.pygame.org/docs/ref/draw.html#pygame.draw.aaline"""
     canvas = surface.canvas()
-    return canvas.aaline(color, startpos, endpos, blend)
+    canvas.aaline(color, startpos, endpos, blend)
+    return canvas.get_surface().get_rect()
 
 
 def aalines(surface, color, closed, pointlist, blend=1) -> pygame.Rect:
     """https://www.pygame.org/docs/ref/draw.html#pygame.draw.aalines"""
     canvas = surface.canvas()
-    return canvas.aalines(color, closed, pointlist, blend)
+    canvas.aalines(color, closed, pointlist, blend)
+    return canvas.get_surface().get_rect()
