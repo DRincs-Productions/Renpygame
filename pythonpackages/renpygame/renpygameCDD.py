@@ -124,7 +124,9 @@ class RenpyGameByTimer(renpy.Displayable):
     def __init__(
         self,
         first_step: Callable[[int, int, float, float], Render],
-        update_process: Callable[[Render, float, float, float, int], Optional[float]],
+        update_process: Callable[
+            [Render, float, float, Optional[float], int], Optional[float]
+        ],
         event_lambda: Optional[Callable[[EventType, int, int, float], Any]] = None,
         delay: float = 0.05,
         end_game_frame: Optional[
@@ -177,14 +179,14 @@ class RenpyGameByTimer(renpy.Displayable):
     @property
     def update_process(
         self,
-    ) -> Callable[[Render, float, float, float, int], Optional[float]]:
+    ) -> Callable[[Render, float, float, Optional[float], int], Optional[float]]:
         """wiki: https://github.com/DRincs-Productions/Renpygame/wiki/Minigame-with-a-render-loop#first_step-and-update_process"""
         return self._update_process
 
     @update_process.setter
     def update_process(
         self,
-        value: Callable[[Render, float, float, float, int], Optional[float]],
+        value: Callable[[Render, float, float, Optional[float], int], Optional[float]],
     ):
         self._update_process = value
 
