@@ -16,7 +16,6 @@ label aliens_start:
 
 label aliens_retry:
 
-    $ renpy.free_memory()
     $ score = aliens.main()
 
     # This eats up any remaining keypresses.
