@@ -74,7 +74,7 @@ A good number of functions should already work even if they have not yet been te
 - [ ] renpygame.cursors (Still to be tested, should already be working)
 - [ ] renpygame.display (Incomplete)
 - [x] renpygame.display.Surface
-- [ ] renpygame.draw
+- [ ] renpygame.draw ( [In development](https://github.com/DRincs-Productions/Renpygame/issues/13) )
 - [ ] renpygame.event (Still to be tested, should already be working)
 - [ ] renpygame.font
 - [ ] renpygame.image (Incomplete)
