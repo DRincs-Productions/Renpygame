@@ -182,6 +182,11 @@ class Render(renpy.Render):
         self, source, pos: tuple[int, int], focus=True, main=True, index=None
     ) -> int:
         """render.blit(): https://github.com/renpy/renpy/blob/master/renpy/display/render.pyx#L778"""
+        if hasattr(source, "background_render") and source.background_render:
+            surffill = renpy.render(
+                source.background_render, source.width, source.height, 0, 0
+            )
+            super().blit(surffill, pos, focus, main, index)
         if hasattr(source, "renpygame_render") and source.renpygame_render:
             source = source.renpygame_render
         return super().blit(source, pos, focus, main, index)
@@ -238,9 +243,9 @@ class Render(renpy.Render):
         # TODO there is a problem a problem with self.width and self.height. They are a float and must be an int. so I have overriden this method
         """
         color = renpy.easy.color(color)
-        solid = renpy.display.imagelike.Solid(color)
-        surf = renpy.render(solid, self.width, self.height, 0, 0)
-        self.blit(surf, (0, 0), focus=False, main=False)
+        # TODO use a self.background_render si not correct, because the color must blit over the current render and under the current render
+        self.background_render = renpy.display.imagelike.Solid(color)
+        # self.blit(surf, (0, 0), focus=False, main=False)
         return
 
     def canvas(self) -> renpy.display.render.Canvas:
@@ -280,7 +285,8 @@ class Render(renpy.Render):
     @property
     def renpygame_render(self) -> renpy.Render:
         """if set will be used during blit() instead of using the parent class.
-        This is used during conversions and is useful to prevent errors.
+        This is used for conversions and is useful to prevent errors.
+        and because if you use a r = renpy.render() and then self.blit(r) it will not work -> when you blit the self(render) into main render it will not work
         # TODO: instead of using this variable during the conversion, one could set all the variables to the old element in the new
         """
         return self._original_render
@@ -288,6 +294,19 @@ class Render(renpy.Render):
     @renpygame_render.setter
     def renpygame_render(self, value: renpy.Render):
         self._original_render = value
+
+    @property
+    def background_render(self) -> renpy.display.imagelike.Solid:
+        """if set will be used as the background render when the parent render blit it.
+        This is used for conversions and is useful to prevent errors.
+        and because if you use a r = renpy.render() and then self.blit(r) it will not work -> when you blit the self(render) into main render it will not work
+        # TODO: instead of using this variable during the conversion, one could set all the variables to the old element in the new
+        """
+        return self._background_render
+
+    @background_render.setter
+    def background_render(self, value: renpy.display.imagelike.Solid):
+        self._background_render = value
 
     def get_width(self) -> int:
         width, _ = self.get_size()

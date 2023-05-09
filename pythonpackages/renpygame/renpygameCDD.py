@@ -17,6 +17,16 @@ def main_render(
     """
     render = renpy.Render(width, height)
     if child_render:
+        if child_render.background_render:
+            print("rendering background_render")
+            surf = renpy.render(
+                child_render.background_render,
+                child_render.width,
+                child_render.height,
+                0,
+                0,
+            )
+            render.blit(surf, (0, 0))
         render.blit(child_render, (0, 0))
     return render
 
