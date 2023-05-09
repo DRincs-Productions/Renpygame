@@ -17,7 +17,7 @@ def main_render(
     """
     render = renpy.Render(width, height)
     if child_render:
-        render.blit(child_render, child_render.get_size())
+        render.blit(child_render, (0, 0))
     return render
 
 
