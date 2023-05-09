@@ -2,7 +2,9 @@ import renpy.exports as renpy
 
 
 class Render(renpy.Render):
-    """https://github.com/renpy/renpy/blob/master/renpy/display/render.pyx#L586"""
+    """https://github.com/renpy/renpy/blob/master/renpy/display/render.pyx#L586
+    # TODO there is a problem a problem with self.width and self.height. They are a float and must be an int.
+    """
 
     def __init__(
         self,
@@ -32,10 +34,25 @@ class Render(renpy.Render):
         """must be int"""
         return int(super().width)
 
+    @width.setter
+    def width(self, value: int):
+        """must be int.
+        # TODO there is a problem a problem with self.width and self.height. They are a float and must be an int.
+        """
+        super().width = int(value)
+
     @property
     def height(self) -> int:
         """must be int"""
         return int(super().height)
+
+    @height.setter
+    def height(self, value: int):
+        """must be int.
+        # TODO there is a problem a problem with self.width and self.height. They are a float and must be an int.
+        """
+        super().height = int(value)
+        print("height set to", value)
 
     @property
     def layer_name(self):
@@ -217,7 +234,14 @@ class Render(renpy.Render):
         return super().is_pixel_opaque(x, y)
 
     def fill(self, color):
-        return super().fill(color)
+        """https://github.com/renpy/renpy/blob/master/renpy/display/render.pyx#L1469
+        # TODO there is a problem a problem with self.width and self.height. They are a float and must be an int. so I have overriden this method
+        """
+        color = renpy.easy.color(color)
+        solid = renpy.display.imagelike.Solid(color)
+        surf = renpy.render(solid, self.width, self.height, 0, 0)
+        self.blit(surf, (0, 0), focus=False, main=False)
+        return
 
     def canvas(self) -> renpy.display.render.Canvas:
         return super().canvas()
