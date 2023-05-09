@@ -15,7 +15,8 @@ class Render(renpy.Render):
         super().__init__(width, height)
         # * Render properties, will come set in super().__init__
 
-        self.renpygame_render = None
+        self.internal_render = None
+        self.background_render = None
 
     @property
     def mark(self):
@@ -187,8 +188,8 @@ class Render(renpy.Render):
                 source.background_render, source.width, source.height, 0, 0
             )
             super().blit(surffill, pos, focus, main, index)
-        if hasattr(source, "renpygame_render") and source.renpygame_render:
-            source = source.renpygame_render
+        if hasattr(source, "internal_render") and source.internal_render:
+            source = source.internal_render
         return super().blit(source, pos, focus, main, index)
 
     def subpixel_blit(
@@ -283,17 +284,17 @@ class Render(renpy.Render):
     # my methods
 
     @property
-    def renpygame_render(self) -> renpy.Render:
+    def internal_render(self) -> renpy.Render:
         """if set will be used during blit() instead of using the parent class.
         This is used for conversions and is useful to prevent errors.
         and because if you use a r = renpy.render() and then self.blit(r) it will not work -> when you blit the self(render) into main render it will not work
         # TODO: instead of using this variable during the conversion, one could set all the variables to the old element in the new
         """
-        return self._original_render
+        return self._internal_render
 
-    @renpygame_render.setter
-    def renpygame_render(self, value: renpy.Render):
-        self._original_render = value
+    @internal_render.setter
+    def internal_render(self, value: renpy.Render):
+        self._internal_render = value
 
     @property
     def background_render(self) -> renpy.display.imagelike.Solid:
