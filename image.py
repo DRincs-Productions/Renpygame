@@ -71,7 +71,7 @@ class Image(renpy.display.im.Image):
         render = renpy.render(self, self.width, self.height, st, at)
         surface.blit(render, (0, 0))
         # TODO: try use olther methods
-        surface.renpygame_render = render
+        surface.internal_render = render
         return surface
 
 
