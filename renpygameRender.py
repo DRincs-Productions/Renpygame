@@ -250,7 +250,13 @@ class Render(renpy.Render):
         return
 
     def canvas(self) -> renpy.display.render.Canvas:
-        return super().canvas()
+        """https://github.com/renpy/renpy/blob/master/renpy/display/render.pyx#L1480
+        # TODO there is a problem a problem with self.width and self.height. They are a float and must be an int. so I have overriden this method
+        """
+        surf = renpy.display.pgrender.surface((self.width, self.height), True)
+        renpy.display.draw.mutated_surface(surf)
+        self.blit(surf, (0, 0))
+        return renpy.display.render.Canvas(surf)
 
     def screen_rect(self, sx: float, sy: float, transform: list[list[int]]):
         return super().screen_rect(sx, sy, transform)
