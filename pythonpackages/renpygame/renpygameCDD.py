@@ -301,6 +301,8 @@ class RenpyGameByTimer(renpy.Displayable):
         inspired by: https://github.com/renpy/renpy/blob/master/renpy/display/layout.py#L1534
         """
 
+        print("Renpy Game Render")
+
         if self.is_game_end_menu:
             if self.end_game_frame is not None:
                 self.end_game_frame(
@@ -318,6 +320,7 @@ class RenpyGameByTimer(renpy.Displayable):
         self._start_redraw_timer(check_game_end=self.current_frame_number > 0)
 
         if self.child_render is None:  # * first round
+            print("Renpy Game First Render")
             self.child_render = self.first_step(width, height, st, at)
             self.current_frame_number = 0
         else:
@@ -326,7 +329,10 @@ class RenpyGameByTimer(renpy.Displayable):
         self.delay = self.update_process(
             self.child_render, st, at, self.delay, self.current_frame_number
         )
-        return main_render(self.child_render, width, height)
+        return self.result_render(self.child_render, width, height)
+
+    def result_render(self, render: renpy.Render, width: int, height: int):
+        return main_render(render, width, height)
 
     def event(self, ev: EventType, x: int, y: int, st: float):
         """pygame_sdl2: https://github.com/renpy/pygame_sdl2/blob/master/src/pygame_sdl2/event.pyx
@@ -346,3 +352,54 @@ class RenpyGameByTimer(renpy.Displayable):
             self.reset_game()
         if self.event_lambda is not None:
             return self.event_lambda(ev, x, y, st)
+
+
+class RenpyGameByTimerOnlyDraw(RenpyGameByTimer):
+    def __init__(
+        self,
+        update_process: Callable[
+            [renpy.Render, float, float, Optional[float], int], Optional[float]
+        ],
+        event_lambda: Optional[Callable[[EventType, int, int, float], Any]] = None,
+        delay: float = 0.5,
+        **kwargs,
+    ):
+        first_step = lambda width, height, st, at: renpy.Render(width, height)
+
+        # RenpyGameByTimer init
+        super().__init__(
+            first_step=first_step,
+            update_process=update_process,
+            event_lambda=event_lambda,
+            delay=delay,
+            **kwargs,
+        )
+
+    def result_render(self, render: renpy.Render, width: int, height: int):
+        return render
+
+    # def _start_redraw_timer(
+    #     self, delay: Optional[float] = None, check_game_end: bool = True
+    # ):
+    #     """inspired by: https://github.com/renpy/renpy/blob/master/renpy/display/layout.py#L1503"""
+    #     if delay is None:
+    #         delay = self.delay
+    #     if self.delay is not None:
+    #         # renpy.redraw(self, delay)
+    #         print("Renpy Game Redraw")
+    #     elif check_game_end:
+    #         self.game_end()
+
+    # def lambda_update(self):
+    #     if not self.child_render:
+    #         self.child_render = self.first_step(0, 0, 0, 0)
+    #     return
+
+    # def show(self, show_and_start: bool = True):
+    #     print("Renpy Game Show")
+    #     if show_and_start:
+    #         self.start()
+    #     renpy.call_screen(
+    #         "renpygame_surface_lambda", surface=self, update_process=self.lambda_update
+    #     )
+    #     return

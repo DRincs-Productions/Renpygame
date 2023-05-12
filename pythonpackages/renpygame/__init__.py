@@ -8,8 +8,7 @@ import pythonpackages.renpygame.transform as my_transform
 import pythonpackages.renpygame.draw as my_draw
 from pythonpackages.renpygame.renpygameCDD import (
     RenpyGameByEvent as my_RenpyGameByEvent,
-)
-from pythonpackages.renpygame.renpygameCDD import (
+    RenpyGameByTimerOnlyDraw as my_RenpyGameByTimerOnlyDraw,
     RenpyGameByTimer as my_RenpyGameByTimer,
 )
 from pythonpackages.renpygame_pygame import *
@@ -27,6 +26,7 @@ draw = my_draw
 
 RenpyGameByTimer = my_RenpyGameByTimer
 RenpyGameByEvent = my_RenpyGameByEvent
+RenpyGameByTimerOnlyDraw = my_RenpyGameByTimerOnlyDraw
 
 
 def init():
