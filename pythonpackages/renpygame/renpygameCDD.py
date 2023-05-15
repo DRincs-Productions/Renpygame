@@ -294,6 +294,16 @@ class RenpyGameByTimer(renpy.Displayable):
     def quit(self):
         self.is_game_end = True
 
+    def _render_update(self, width: int, height: int, st: float, at: float):
+        if self.current_frame_number % 3600 == 0:
+            free_memory()
+
+        self.current_frame_number += 1
+        # * first round and subsequent rounds
+        self.delay = self.update_process(
+            self.child_render, st, at, self.delay, self.current_frame_number
+        )
+
     def render(self, width: int, height: int, st: float, at: float) -> renpy.Render:
         """this function will be started in the form of a loop.
         through start_redraw_timer, I trigger the event direnpy.redraw to create the loop.
@@ -310,9 +320,6 @@ class RenpyGameByTimer(renpy.Displayable):
                 print("Error: end_game_frame is None")
                 self.quit()
 
-        if self.current_frame_number % 3600 == 0:
-            free_memory()
-
         # * start the timer immediately at the beginning of the function. so that update_process does not affect the fps.
         # * I don't know if this is a good idea because if update_process time > delay, the game will be looped or the game skip a frame.
         self._start_redraw_timer(check_game_end=self.current_frame_number > 0)
@@ -320,12 +327,8 @@ class RenpyGameByTimer(renpy.Displayable):
         if self.child_render is None:  # * first round
             self.child_render = self.first_step(width, height, st, at)
             self.current_frame_number = 0
-        else:
-            self.current_frame_number += 1
-        # * first round and subsequent rounds
-        self.delay = self.update_process(
-            self.child_render, st, at, self.delay, self.current_frame_number
-        )
+        else:  # * first round and subsequent rounds
+            self._render_update(width, height, st, at)
         return main_render(self.child_render, width, height)
 
     def event(self, ev: EventType, x: int, y: int, st: float):
