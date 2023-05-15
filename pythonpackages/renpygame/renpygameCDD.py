@@ -392,6 +392,7 @@ class RenpyGameByLoop(RenpyGameByTimer):
 
         # * start the timer immediately at the beginning of the function. so that update_process does not affect the fps.
         # * I don't know if this is a good idea because if update_process time > delay, the game will be looped or the game skip a frame.
-        renpy.redraw(self, self.delay)
+        if self.delay:
+            renpy.redraw(self, self.delay)
 
         return super().render(width, height, st, at)
