@@ -126,9 +126,7 @@ def free_memory():
 
 
 class RenpyGameByTimer(renpy.Displayable):
-    """inspired by: DynamicDisplayable: https://github.com/renpy/renpy/blob/master/renpy/display/layout.py#L1418
-    wiki: https://www.renpy.org/doc/html/displayables.html?highlight=dynamic#DynamicDisplayable
-    """
+    """ """
 
     def __init__(
         self,
