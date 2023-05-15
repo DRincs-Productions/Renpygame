@@ -8,6 +8,8 @@ from pythonpackages.renpygame.renpygameRender import Render
 
 # https://www.renpy.org/doc/html/cdd.html
 
+PYGAMEEVENT = 4132143
+
 
 def main_render(
     child_render: Optional[Render], width: int, height: int
@@ -263,7 +265,7 @@ class RenpyGameByTimer(renpy.Displayable):
             print("Renpy Game Start")
             self.is_started = True
             self.delay = self.start_delay
-            pygame.time.set_timer(1234, int(self.delay * 1000))
+            pygame.time.set_timer(PYGAMEEVENT, int(self.delay * 1000))
             # self._start_redraw_timer()
         else:
             print("Renpy Game Already Started")
@@ -322,6 +324,7 @@ class RenpyGameByTimer(renpy.Displayable):
         """
         if self.is_game_end:
             renpy.free_memory()
+            pygame.time.set_timer(PYGAMEEVENT, 0)
             return 0
 
         if hasattr(ev.dict, "key"):
@@ -331,8 +334,11 @@ class RenpyGameByTimer(renpy.Displayable):
         #     self._start_redraw_timer(check_game_end=False)
         if 32768 == ev.type:  # 32768 is the event type for pause menu
             self.reset_game()
-        if 1234 == ev.type:
-            print(ev, x, y, st)
+        if PYGAMEEVENT == ev.type:
+            if self.delay:
+                pygame.time.set_timer(PYGAMEEVENT, int(self.delay * 1000))
+            else:
+                pygame.time.set_timer(PYGAMEEVENT, 0)
             if self.child_render is None:
                 renpy.redraw(self, 0)
             else:
