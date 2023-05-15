@@ -244,7 +244,7 @@ def main():
         sh = SharedDataAlienGame()
 
     # Initialize a game
-    displayable_with_logic = pygame.RenpyGameByTimer(
+    displayable_with_logic = pygame.RenpyGameByLoop(
         first_step=my_game_first_step,
         update_process=my_game_logic,
         event_lambda=game_event,
@@ -339,7 +339,6 @@ def my_game_first_step(width: int, height: int, st: float, at: float) -> pygame.
 def my_game_logic(
     cur_screen: pygame.Surface,
     st: float,
-    at: float,
     next_frame_time: Optional[float],
     current_frame_number: int,
 ) -> Optional[float]:
