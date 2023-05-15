@@ -8,7 +8,7 @@ from pythonpackages.renpygame.renpygameRender import Render
 
 # https://www.renpy.org/doc/html/cdd.html
 
-PYGAMEEVENT = 4132143
+PYGAMEEVENT = 6828
 
 
 def main_render(
