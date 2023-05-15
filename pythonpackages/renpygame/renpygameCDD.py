@@ -261,6 +261,7 @@ class RenpyGameByTimer(renpy.Displayable):
             print("Renpy Game Start")
             self.is_started = True
             self.delay = self.start_delay
+            pygame.time.set_timer(1234, int(self.delay * 1000))
             self._start_redraw_timer()
         else:
             print("Renpy Game Already Started")
@@ -322,10 +323,10 @@ class RenpyGameByTimer(renpy.Displayable):
             self.current_frame_number = 0
         else:
             self.current_frame_number += 1
-        # * first round and subsequent rounds
-        self.delay = self.update_process(
-            self.child_render, st, at, self.delay, self.current_frame_number
-        )
+        # # * first round and subsequent rounds
+        # self.delay = self.update_process(
+        #     self.child_render, st, at, self.delay, self.current_frame_number
+        # )
         return main_render(self.child_render, width, height)
 
     def event(self, ev: EventType, x: int, y: int, st: float):
@@ -344,5 +345,10 @@ class RenpyGameByTimer(renpy.Displayable):
             self._start_redraw_timer(check_game_end=False)
         if 32768 == ev.type:  # 32768 is the event type for pause menu
             self.reset_game()
+        if 1234 == ev.type and self.child_render is not None:
+            print(ev, x, y, st)
+            self.update_process(
+                self.child_render, st, 0, self.delay, self.current_frame_number
+            )
         if self.event_lambda is not None:
             return self.event_lambda(ev, x, y, st)
