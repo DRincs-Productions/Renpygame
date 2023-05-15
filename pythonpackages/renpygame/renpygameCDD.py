@@ -262,7 +262,7 @@ class RenpyGameByTimer(renpy.Displayable):
             self.is_started = True
             self.delay = self.start_delay
             pygame.time.set_timer(1234, int(self.delay * 1000))
-            self._start_redraw_timer()
+            # self._start_redraw_timer()
         else:
             print("Renpy Game Already Started")
         return
@@ -295,22 +295,10 @@ class RenpyGameByTimer(renpy.Displayable):
     def quit(self):
         self.is_game_end = True
 
-    def _render_update(self, width: int, height: int, st: float, at: float):
+    # TODO: to be dismembered
+    def _render_update(self, st: float, at: float = 0.0):
         if self.current_frame_number % 3600 == 0:
             free_memory()
-
-        self.current_frame_number += 1
-        # # * first round and subsequent rounds
-        # self.delay = self.update_process(
-        #     self.child_render, st, at, self.delay, self.current_frame_number
-        # )
-
-    def render(self, width: int, height: int, st: float, at: float) -> renpy.Render:
-        """this function will be started in the form of a loop.
-        through start_redraw_timer, I trigger the event direnpy.redraw to create the loop.
-
-        inspired by: https://github.com/renpy/renpy/blob/master/renpy/display/layout.py#L1534
-        """
 
         if self.is_game_end_menu:
             if self.end_game_frame is not None:
@@ -320,16 +308,29 @@ class RenpyGameByTimer(renpy.Displayable):
             else:
                 print("Error: end_game_frame is None")
                 self.quit()
+        else:
+            self.current_frame_number += 1
+            # * first round and subsequent rounds
+            self.delay = self.update_process(
+                self.child_render, st, at, self.delay, self.current_frame_number
+            )
 
-        # * start the timer immediately at the beginning of the function. so that update_process does not affect the fps.
-        # * I don't know if this is a good idea because if update_process time > delay, the game will be looped or the game skip a frame.
-        self._start_redraw_timer(check_game_end=self.current_frame_number > 0)
+    def render(self, width: int, height: int, st: float, at: float) -> renpy.Render:
+        """this function will be started in the form of a loop.
+        through start_redraw_timer, I trigger the event direnpy.redraw to create the loop.
+
+        inspired by: https://github.com/renpy/renpy/blob/master/renpy/display/layout.py#L1534
+        """
+
+        # # * start the timer immediately at the beginning of the function. so that update_process does not affect the fps.
+        # # * I don't know if this is a good idea because if update_process time > delay, the game will be looped or the game skip a frame.
+        # self._start_redraw_timer(check_game_end=self.current_frame_number > 0)
 
         if self.child_render is None:  # * first round
             self.child_render = self.first_step(width, height, st, at)
             self.current_frame_number = 0
         else:  # * first round and subsequent rounds
-            self._render_update(width, height, st, at)
+            self._render_update(st, at)
         return main_render(self.child_render, width, height)
 
     def event(self, ev: EventType, x: int, y: int, st: float):
@@ -344,15 +345,16 @@ class RenpyGameByTimer(renpy.Displayable):
         if hasattr(ev.dict, "key"):
             ev.key = None
 
-        if pygame.WINDOWEVENT == ev.type:
-            self._start_redraw_timer(check_game_end=False)
+        # if pygame.WINDOWEVENT == ev.type:
+        #     self._start_redraw_timer(check_game_end=False)
         if 32768 == ev.type:  # 32768 is the event type for pause menu
             self.reset_game()
-        if 1234 == ev.type and self.child_render is not None:
+        if 1234 == ev.type:
             print(ev, x, y, st)
-            self.update_process(
-                self.child_render, st, 0, self.delay, self.current_frame_number
-            )
+            if self.child_render is None:
+                renpy.redraw(self, 0)
+            else:
+                self._render_update(st)
             return
         if self.event_lambda is not None:
             return self.event_lambda(ev, x, y, st)
