@@ -128,6 +128,7 @@ def free_memory():
 class RenpyGameByTimer(renpy.Displayable):
     """inspired by: DynamicDisplayable: https://github.com/renpy/renpy/blob/master/renpy/display/layout.py#L1418
     wiki: https://www.renpy.org/doc/html/displayables.html?highlight=dynamic#DynamicDisplayable
+    inspired by: https://github.com/renpy/renpy/blob/master/renpy/display/layout.py#L1503
     """
 
     def __init__(
@@ -247,6 +248,10 @@ class RenpyGameByTimer(renpy.Displayable):
     ):
         self._end_game_frame = value
 
+    @property
+    def is_full_redraw(self) -> bool:
+        return self.current_frame_number % 2 == 0
+
     def show(self, show_and_start: bool = True):
         """wiki: https://github.com/DRincs-Productions/Renpygame/wiki/Minigame-with-a-render-loop#start-a-game-between-a-sterted-menu"""
         print("Renpy Game Show")
@@ -272,17 +277,6 @@ class RenpyGameByTimer(renpy.Displayable):
         self.delay = self.start_delay
         self.child_render = None
 
-    def _start_redraw_timer(
-        self, delay: Optional[float] = None, check_game_end: bool = True
-    ):
-        """inspired by: https://github.com/renpy/renpy/blob/master/renpy/display/layout.py#L1503"""
-        if delay is None:
-            delay = self.delay
-        if self.delay is not None:
-            renpy.redraw(self, delay)
-        elif check_game_end:
-            self.game_end()
-
     def game_end(self):
         print("Renpy Game End")
         if self.end_game_frame is not None:
@@ -295,11 +289,7 @@ class RenpyGameByTimer(renpy.Displayable):
     def quit(self):
         self.is_game_end = True
 
-    # TODO: to be dismembered
-    def _render_update(self, st: float, at: float = 0.0):
-        if self.current_frame_number % 3600 == 0:
-            free_memory()
-
+    def _render_update(self, st: float, at: float = 0.0, check_game_end: bool = True):
         if self.is_game_end_menu:
             if self.end_game_frame is not None:
                 self.end_game_frame(
@@ -308,12 +298,17 @@ class RenpyGameByTimer(renpy.Displayable):
             else:
                 print("Error: end_game_frame is None")
                 self.quit()
+        elif check_game_end and self.delay is None:
+            self.game_end()
         else:
             self.current_frame_number += 1
             # * first round and subsequent rounds
             self.delay = self.update_process(
                 self.child_render, st, at, self.delay, self.current_frame_number
             )
+
+        if self.current_frame_number % 3600 == 0:
+            free_memory()
 
     def render(self, width: int, height: int, st: float, at: float) -> renpy.Render:
         """this function will be started in the form of a loop.
@@ -354,7 +349,10 @@ class RenpyGameByTimer(renpy.Displayable):
             if self.child_render is None:
                 renpy.redraw(self, 0)
             else:
-                self._render_update(st)
+                if self.is_full_redraw:
+                    renpy.redraw(self, 0)
+                else:
+                    self._render_update(st)
             return
         if self.event_lambda is not None:
             return self.event_lambda(ev, x, y, st)
