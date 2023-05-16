@@ -141,6 +141,7 @@ class RenpyGameByTimer(renpy.Displayable):
         end_game_frame: Optional[
             Callable[[Render, float, float, float, int], None]
         ] = None,
+        is_full_redraw: Optional[Callable[[int], bool]] = None,
         **kwargs,
     ):
         self.first_step = first_step
@@ -154,6 +155,8 @@ class RenpyGameByTimer(renpy.Displayable):
         self.is_game_end = False
         self.end_game_frame = end_game_frame
         self.is_game_end_menu = False
+        if is_full_redraw:
+            self.is_full_redraw_lamda = is_full_redraw
 
         # renpy.Displayable init
         super(RenpyGameByTimer, self).__init__(**kwargs)
@@ -248,8 +251,22 @@ class RenpyGameByTimer(renpy.Displayable):
         self._end_game_frame = value
 
     @property
-    def is_full_redraw(self) -> bool:
-        return self.current_frame_number % 2 == 0
+    def is_full_redraw_lamda(
+        self,
+    ) -> Optional[Callable[[int], bool]]:
+        return self._is_full_redraw_lamda
+
+    @is_full_redraw_lamda.setter
+    def is_full_redraw_lamda(
+        self,
+        value: Optional[Callable[[int], bool]],
+    ):
+        self._is_full_redraw_lamda = value
+
+    def _is_full_redraw(self, current_frame_number: int) -> bool:
+        if self.is_full_redraw_lamda:
+            return self.is_full_redraw_lamda(current_frame_number)
+        return current_frame_number % 2 == 0
 
     def show(self, show_and_start: bool = True):
         """wiki: https://github.com/DRincs-Productions/Renpygame/wiki/Minigame-with-a-render-loop#start-a-game-between-a-sterted-menu"""
@@ -342,7 +359,7 @@ class RenpyGameByTimer(renpy.Displayable):
             if self.child_render is None:
                 renpy.redraw(self, 0)
             else:
-                if self.is_full_redraw:
+                if self._is_full_redraw(self.current_frame_number):
                     renpy.redraw(self, 0)
                 else:
                     self._render_update(st)
