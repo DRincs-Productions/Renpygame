@@ -429,7 +429,7 @@ class RenpyGameByLoop(RenpyGameByTimer):
         return super().render(width, height, st, at)
 
 
-class RenpyGameByTimerOnlyDraw(RenpyGameByTimer):
+class RenpyGameByTimerForDraw(RenpyGameByTimer):
     def __init__(
         self,
         first_step: Callable[[int, int, float, float], Render],
@@ -448,9 +448,6 @@ class RenpyGameByTimerOnlyDraw(RenpyGameByTimer):
             delay=delay,
             **kwargs,
         )
-
-    def result_render(self, render: renpy.Render, width: int, height: int):
-        return render
 
     def _is_full_redraw(self, current_frame_number: int) -> bool:
         return False
