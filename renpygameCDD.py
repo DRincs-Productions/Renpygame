@@ -320,7 +320,10 @@ class RenpyGameByTimer(renpy.Displayable):
             self.current_frame_number += 1
             # * first round and subsequent rounds
             self.delay = self.update_process(
-                self.child_render, st, self.delay, self.current_frame_number
+                self.child_render,
+                st,
+                self.delay,
+                self.current_frame_number,
             )
 
         if self.current_frame_number % 3600 == 0:
@@ -329,6 +332,7 @@ class RenpyGameByTimer(renpy.Displayable):
     def render(self, width: int, height: int, st: float, at: float) -> renpy.Render:
         if self.child_render is None:  # * first round
             self.child_render = self.first_step(width, height, st, at)
+            self.child_render.renpygame_canvas = self.child_render.canvas()
             self.current_frame_number = 0
         else:  # * first round and subsequent rounds
             self._render_update(st)
@@ -451,29 +455,3 @@ class RenpyGameByTimerOnlyDraw(RenpyGameByTimer):
 
     def _is_full_redraw(self, current_frame_number: int) -> bool:
         return False
-
-    # def _start_redraw_timer(
-    #     self, delay: Optional[float] = None, check_game_end: bool = True
-    # ):
-    #     """inspired by: https://github.com/renpy/renpy/blob/master/renpy/display/layout.py#L1503"""
-    #     if delay is None:
-    #         delay = self.delay
-    #     if self.delay is not None:
-    #         # renpy.redraw(self, delay)
-    #         print("Renpy Game Redraw")
-    #     elif check_game_end:
-    #         self.game_end()
-
-    # def lambda_update(self):
-    #     if not self.child_render:
-    #         self.child_render = self.first_step(0, 0, 0, 0)
-    #     return
-
-    # def show(self, show_and_start: bool = True):
-    #     print("Renpy Game Show")
-    #     if show_and_start:
-    #         self.start()
-    #     renpy.call_screen(
-    #         "renpygame_surface_lambda", surface=self, update_process=self.lambda_update
-    #     )
-    #     return

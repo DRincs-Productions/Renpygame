@@ -1,3 +1,4 @@
+from pythonpackages.renpygame.renpygameRender import Render
 from pythonpackages.renpygame_pygame.draw import *
 import renpy.exports as renpy
 
@@ -7,7 +8,7 @@ import renpy.exports as renpy
 
 
 def rect(
-    surface,
+    surface: Render,
     color,
     rect,
     width=0,
@@ -18,14 +19,21 @@ def rect(
     border_bottom_right_radius=-1,
 ):
     """https://www.pygame.org/docs/ref/draw.html#pygame.draw.rect"""
-    canvas = surface.canvas()
+    if hasattr(surface, "renpygame_canvas"):
+        canvas = surface.renpygame_canvas
+    else:
+        canvas = surface.canvas()
     canvas.rect(color, rect, width)
     return surface
 
 
 def polygon(surface, color, points, width=0):
     """https://www.pygame.org/docs/ref/draw.html#pygame.draw.polygon"""
-    canvas = surface.canvas()
+    if hasattr(surface, "renpygame_canvas"):
+        canvas = surface.renpygame_canvas
+    else:
+        canvas = surface.canvas()
+    canvas.rect(color, rect, width)
     canvas.polygon(color, points, width)
     return surface
 
@@ -42,48 +50,76 @@ def circle(
     draw_bottom_right=None,
 ):
     """https://www.pygame.org/docs/ref/draw.html#pygame.draw.circle"""
-    canvas = surface.canvas()
+    if hasattr(surface, "renpygame_canvas"):
+        canvas = surface.renpygame_canvas
+    else:
+        canvas = surface.canvas()
+    canvas.rect(color, rect, width)
     canvas.circle(color, center, radius, width)
     return canvas.get_surface().get_rect()
 
 
 def ellipse(surface, color, rect, width=0):
     """https://www.pygame.org/docs/ref/draw.html#pygame.draw.ellipse"""
-    canvas = surface.canvas()
+    if hasattr(surface, "renpygame_canvas"):
+        canvas = surface.renpygame_canvas
+    else:
+        canvas = surface.canvas()
+    canvas.rect(color, rect, width)
     canvas.ellipse(color, rect, width)
     return surface
 
 
 def arc(surface, color, rect, start_angle, stop_angle, width=1):
     """https://www.pygame.org/docs/ref/draw.html#pygame.draw.arc"""
-    canvas = surface.canvas()
+    if hasattr(surface, "renpygame_canvas"):
+        canvas = surface.renpygame_canvas
+    else:
+        canvas = surface.canvas()
+    canvas.rect(color, rect, width)
     canvas.arc(color, rect, start_angle, stop_angle, width)
     return surface
 
 
 def line(surface, color, start_pos, end_pos, width=1):
     """https://www.pygame.org/docs/ref/draw.html#pygame.draw.line"""
-    canvas = surface.canvas()
+    if hasattr(surface, "renpygame_canvas"):
+        canvas = surface.renpygame_canvas
+    else:
+        canvas = surface.canvas()
+    canvas.rect(color, rect, width)
     canvas.line(color, start_pos, end_pos, width)
     return surface
 
 
 def lines(surface, color, closed, pointlist, width=1):
     """https://www.pygame.org/docs/ref/draw.html#pygame.draw.lines"""
-    canvas = surface.canvas()
+    if hasattr(surface, "renpygame_canvas"):
+        canvas = surface.renpygame_canvas
+    else:
+        canvas = surface.canvas()
+    canvas.rect(color, rect, width)
     canvas.lines(color, closed, pointlist, width)
     return surface
 
 
 def aaline(surface, color, startpos, endpos, blend=1):
     """https://www.pygame.org/docs/ref/draw.html#pygame.draw.aaline"""
-    canvas = surface.canvas()
+    if hasattr(surface, "renpygame_canvas"):
+        canvas = surface.renpygame_canvas
+    else:
+        canvas = surface.canvas()
+    canvas.rect(color, rect, width)
     canvas.aaline(color, startpos, endpos, blend)
     return surface
 
 
 def aalines(surface, color, closed, pointlist, blend=1):
     """https://www.pygame.org/docs/ref/draw.html#pygame.draw.aalines"""
-    canvas = surface.canvas()
+    if hasattr(surface, "renpygame_canvas"):
+        canvas = surface.renpygame_canvas
+    else:
+        canvas = surface.canvas()
+    canvas.rect(color, rect, width)
     canvas.aalines(color, closed, pointlist, blend)
     return surface
