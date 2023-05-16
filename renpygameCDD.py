@@ -319,6 +319,7 @@ class RenpyGameByTimer(renpy.Displayable):
         else:
             self.current_frame_number += 1
             # * first round and subsequent rounds
+            self.child_render.renpygame_canvas = None
             self.delay = self.update_process(
                 self.child_render,
                 st,
@@ -332,7 +333,7 @@ class RenpyGameByTimer(renpy.Displayable):
     def render(self, width: int, height: int, st: float, at: float) -> renpy.Render:
         if self.child_render is None:  # * first round
             self.child_render = self.first_step(width, height, st, at)
-            self.child_render.renpygame_canvas = self.child_render.canvas()
+            self.child_render.renpygame_canvas = None
             self.current_frame_number = 0
         else:  # * first round and subsequent rounds
             self._render_update(st)
