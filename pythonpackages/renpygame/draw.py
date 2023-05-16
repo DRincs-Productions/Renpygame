@@ -15,6 +15,8 @@ def get_canvas(surface: Render) -> Canvas:
         render_to_use = surface
     if hasattr(render_to_use, "renpygame_canvas"):
         canvas = render_to_use.renpygame_canvas
+    elif hasattr(surface, "renpygame_canvas"):
+        canvas = surface.renpygame_canvas
     else:
         canvas = render_to_use.canvas()
     return canvas
