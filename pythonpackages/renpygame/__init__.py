@@ -8,7 +8,7 @@ import pythonpackages.renpygame.sprite as my_sprite
 import pythonpackages.renpygame.transform as my_transform
 from pythonpackages.renpygame.renpygameCDD import (
     RenpyGameByEvent as my_RenpyGameByEvent,
-    RenpyGameByTimerOnlyDraw as my_RenpyGameByTimerOnlyDraw,
+    RenpyGameByTimerForDraw as my_RenpyGameByTimerOnlyDraw,
 )
 from pythonpackages.renpygame.renpygameCDD import RenpyGameByLoop as my_RenpyGameByLoop
 from pythonpackages.renpygame.renpygameCDD import (
