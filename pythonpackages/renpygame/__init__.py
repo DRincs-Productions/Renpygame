@@ -1,14 +1,17 @@
 import pythonpackages.renpygame.display as my_display
+import pythonpackages.renpygame.draw as my_draw
 import pythonpackages.renpygame.event as my_event
 import pythonpackages.renpygame.image as my_image
 import pythonpackages.renpygame.mixer as my_mixer
 import pythonpackages.renpygame.rect as my_rect
 import pythonpackages.renpygame.sprite as my_sprite
 import pythonpackages.renpygame.transform as my_transform
-import pythonpackages.renpygame.draw as my_draw
 from pythonpackages.renpygame.renpygameCDD import (
     RenpyGameByEvent as my_RenpyGameByEvent,
     RenpyGameByTimerOnlyDraw as my_RenpyGameByTimerOnlyDraw,
+)
+from pythonpackages.renpygame.renpygameCDD import RenpyGameByLoop as my_RenpyGameByLoop
+from pythonpackages.renpygame.renpygameCDD import (
     RenpyGameByTimer as my_RenpyGameByTimer,
 )
 from pythonpackages.renpygame_pygame import *
@@ -27,6 +30,7 @@ draw = my_draw
 RenpyGameByTimer = my_RenpyGameByTimer
 RenpyGameByEvent = my_RenpyGameByEvent
 RenpyGameByTimerOnlyDraw = my_RenpyGameByTimerOnlyDraw
+RenpyGameByLoop = my_RenpyGameByLoop
 
 
 def init():

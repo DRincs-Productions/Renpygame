@@ -15,8 +15,11 @@ label aliens_start:
     e "Good luck!"
 
 label aliens_retry:
-
-    $ score = aliens.main()
+    menu:
+        "RenpyGameByLoop":
+            $ score = aliens.main()
+        "RenpyGameByTimer":
+            $ score = aliens.mainByTimer()
 
     # # This eats up any remaining keypresses.
     # $ renpy.pause(.1)

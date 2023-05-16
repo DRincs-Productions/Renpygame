@@ -244,6 +244,32 @@ def main():
         sh = SharedDataAlienGame()
 
     # Initialize a game
+    displayable_with_logic = pygame.RenpyGameByLoop(
+        first_step=my_game_first_step,
+        update_process=my_game_logic,
+        event_lambda=game_event,
+        delay=0.04,
+    )
+    # show amd start the game
+    displayable_with_logic.show()
+
+    # * after show() the game will be running when the game is over
+
+    # clean up the shared data
+    score = sh.score
+    sh = None
+    # return to renpy
+    return score
+
+
+def mainByTimer():
+    # # Initialize a shared data
+    global sh
+
+    if not sh:
+        sh = SharedDataAlienGame()
+
+    # Initialize a game
     displayable_with_logic = pygame.RenpyGameByTimer(
         first_step=my_game_first_step,
         update_process=my_game_logic,
@@ -339,7 +365,6 @@ def my_game_first_step(width: int, height: int, st: float, at: float) -> pygame.
 def my_game_logic(
     cur_screen: pygame.Surface,
     st: float,
-    at: float,
     next_frame_time: Optional[float],
     current_frame_number: int,
 ) -> Optional[float]:

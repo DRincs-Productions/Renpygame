@@ -8,6 +8,8 @@ from pythonpackages.renpygame.renpygameRender import Render
 
 # https://www.renpy.org/doc/html/cdd.html
 
+PYGAMEEVENT = 6828
+
 
 def main_render(
     child_render: Optional[Render], width: int, height: int
@@ -126,21 +128,20 @@ def free_memory():
 
 
 class RenpyGameByTimer(renpy.Displayable):
-    """inspired by: DynamicDisplayable: https://github.com/renpy/renpy/blob/master/renpy/display/layout.py#L1418
-    wiki: https://www.renpy.org/doc/html/displayables.html?highlight=dynamic#DynamicDisplayable
-    """
+    """ """
 
     def __init__(
         self,
         first_step: Callable[[int, int, float, float], Render],
         update_process: Callable[
-            [Render, float, float, Optional[float], int], Optional[float]
+            [Render, float, Optional[float], int], Optional[float]
         ],
         event_lambda: Optional[Callable[[EventType, int, int, float], Any]] = None,
         delay: float = 0.05,
         end_game_frame: Optional[
             Callable[[Render, float, float, float, int], None]
         ] = None,
+        is_full_redraw: Optional[Callable[[int], bool]] = None,
         **kwargs,
     ):
         self.first_step = first_step
@@ -154,6 +155,7 @@ class RenpyGameByTimer(renpy.Displayable):
         self.is_game_end = False
         self.end_game_frame = end_game_frame
         self.is_game_end_menu = False
+        self.is_full_redraw_lamda = is_full_redraw
 
         # renpy.Displayable init
         super(RenpyGameByTimer, self).__init__(**kwargs)
@@ -188,14 +190,14 @@ class RenpyGameByTimer(renpy.Displayable):
     @property
     def update_process(
         self,
-    ) -> Callable[[Render, float, float, Optional[float], int], Optional[float]]:
+    ) -> Callable[[Render, float, Optional[float], int], Optional[float]]:
         """wiki: https://github.com/DRincs-Productions/Renpygame/wiki/Minigame-with-a-render-loop#first_step-and-update_process"""
         return self._update_process
 
     @update_process.setter
     def update_process(
         self,
-        value: Callable[[Render, float, float, Optional[float], int], Optional[float]],
+        value: Callable[[Render, float, Optional[float], int], Optional[float]],
     ):
         self._update_process = value
 
@@ -247,6 +249,24 @@ class RenpyGameByTimer(renpy.Displayable):
     ):
         self._end_game_frame = value
 
+    @property
+    def is_full_redraw_lamda(
+        self,
+    ) -> Optional[Callable[[int], bool]]:
+        return self._is_full_redraw_lamda
+
+    @is_full_redraw_lamda.setter
+    def is_full_redraw_lamda(
+        self,
+        value: Optional[Callable[[int], bool]],
+    ):
+        self._is_full_redraw_lamda = value
+
+    def _is_full_redraw(self, current_frame_number: int) -> bool:
+        if self.is_full_redraw_lamda:
+            return self.is_full_redraw_lamda(current_frame_number)
+        return current_frame_number % 2 == 0
+
     def show(self, show_and_start: bool = True):
         """wiki: https://github.com/DRincs-Productions/Renpygame/wiki/Minigame-with-a-render-loop#start-a-game-between-a-sterted-menu"""
         print("Renpy Game Show")
@@ -261,7 +281,8 @@ class RenpyGameByTimer(renpy.Displayable):
             print("Renpy Game Start")
             self.is_started = True
             self.delay = self.start_delay
-            self._start_redraw_timer()
+            pygame.time.set_timer(PYGAMEEVENT, int(self.delay * 1000))
+            # self._start_redraw_timer()
         else:
             print("Renpy Game Already Started")
         return
@@ -270,17 +291,6 @@ class RenpyGameByTimer(renpy.Displayable):
         print("Renpy Game Reset")
         self.delay = self.start_delay
         self.child_render = None
-
-    def _start_redraw_timer(
-        self, delay: Optional[float] = None, check_game_end: bool = True
-    ):
-        """inspired by: https://github.com/renpy/renpy/blob/master/renpy/display/layout.py#L1503"""
-        if delay is None:
-            delay = self.delay
-        if self.delay is not None:
-            renpy.redraw(self, delay)
-        elif check_game_end:
-            self.game_end()
 
     def game_end(self):
         print("Renpy Game End")
@@ -294,15 +304,7 @@ class RenpyGameByTimer(renpy.Displayable):
     def quit(self):
         self.is_game_end = True
 
-    def render(self, width: int, height: int, st: float, at: float) -> renpy.Render:
-        """this function will be started in the form of a loop.
-        through start_redraw_timer, I trigger the event direnpy.redraw to create the loop.
-
-        inspired by: https://github.com/renpy/renpy/blob/master/renpy/display/layout.py#L1534
-        """
-
-        print("Renpy Game Render")
-
+    def _render_update(self, st: float, check_game_end: bool = True):
         if self.is_game_end_menu:
             if self.end_game_frame is not None:
                 self.end_game_frame(
@@ -311,24 +313,24 @@ class RenpyGameByTimer(renpy.Displayable):
             else:
                 print("Error: end_game_frame is None")
                 self.quit()
+        elif check_game_end and self.delay is None:
+            self.game_end()
+        else:
+            self.current_frame_number += 1
+            # * first round and subsequent rounds
+            self.delay = self.update_process(
+                self.child_render, st, self.delay, self.current_frame_number
+            )
 
         if self.current_frame_number % 3600 == 0:
             free_memory()
 
-        # * start the timer immediately at the beginning of the function. so that update_process does not affect the fps.
-        # * I don't know if this is a good idea because if update_process time > delay, the game will be looped or the game skip a frame.
-        self._start_redraw_timer(check_game_end=self.current_frame_number > 0)
-
+    def render(self, width: int, height: int, st: float, at: float) -> renpy.Render:
         if self.child_render is None:  # * first round
-            print("Renpy Game First Render")
             self.child_render = self.first_step(width, height, st, at)
             self.current_frame_number = 0
-        else:
-            self.current_frame_number += 1
-        # * first round and subsequent rounds
-        self.delay = self.update_process(
-            self.child_render, st, at, self.delay, self.current_frame_number
-        )
+        else:  # * first round and subsequent rounds
+            self._render_update(st)
         return self.result_render(self.child_render, width, height)
 
     def result_render(self, render: renpy.Render, width: int, height: int):
@@ -341,17 +343,84 @@ class RenpyGameByTimer(renpy.Displayable):
         """
         if self.is_game_end:
             renpy.free_memory()
+            pygame.time.set_timer(PYGAMEEVENT, 0)
             return 0
 
         if hasattr(ev.dict, "key"):
             ev.key = None
 
-        if pygame.WINDOWEVENT == ev.type:
-            self._start_redraw_timer(check_game_end=False)
+        # if pygame.WINDOWEVENT == ev.type:
+        #     self._start_redraw_timer(check_game_end=False)
         if 32768 == ev.type:  # 32768 is the event type for pause menu
             self.reset_game()
+        if PYGAMEEVENT == ev.type:
+            if self.delay:
+                pygame.time.set_timer(PYGAMEEVENT, int(self.delay * 1000))
+            else:
+                pygame.time.set_timer(PYGAMEEVENT, 0)
+            if self.child_render is None:
+                renpy.redraw(self, 0)
+            else:
+                if self._is_full_redraw(self.current_frame_number):
+                    renpy.redraw(self, 0)
+                else:
+                    self._render_update(st)
+            return
         if self.event_lambda is not None:
             return self.event_lambda(ev, x, y, st)
+
+
+class RenpyGameByLoop(RenpyGameByTimer):
+    """
+    inspired by: https://github.com/renpy/renpy/blob/master/renpy/display/layout.py#L1503
+    """
+
+    def __init__(
+        self,
+        first_step: Callable[[int, int, float, float], Render],
+        update_process: Callable[
+            [Render, float, Optional[float], int], Optional[float]
+        ],
+        event_lambda: Optional[Callable[[EventType, int, int, float], Any]] = None,
+        delay: float = 0.05,
+        end_game_frame: Optional[
+            Callable[[Render, float, float, float, int], None]
+        ] = None,
+        **kwargs,
+    ):
+        super().__init__(
+            first_step=first_step,
+            update_process=update_process,
+            event_lambda=event_lambda,
+            delay=delay,
+            end_game_frame=end_game_frame,
+            **kwargs,
+        )
+
+    def start(self):
+        """wiki: https://github.com/DRincs-Productions/Renpygame/wiki/Minigame-with-a-render-loop#start-a-game-between-a-sterted-menu"""
+        if not self.is_started:
+            print("Renpy Game Start")
+            self.is_started = True
+            self.delay = self.start_delay
+            renpy.redraw(self, 0)
+        else:
+            print("Renpy Game Already Started")
+        return
+
+    def render(self, width: int, height: int, st: float, at: float) -> renpy.Render:
+        """this function will be started in the form of a loop.
+        through start_redraw_timer, I trigger the event direnpy.redraw to create the loop.
+
+        inspired by: https://github.com/renpy/renpy/blob/master/renpy/display/layout.py#L1534
+        """
+
+        # * start the timer immediately at the beginning of the function. so that update_process does not affect the fps.
+        # * I don't know if this is a good idea because if update_process time > delay, the game will be looped or the game skip a frame.
+        if self.delay:
+            renpy.redraw(self, self.delay)
+
+        return super().render(width, height, st, at)
 
 
 class RenpyGameByTimerOnlyDraw(RenpyGameByTimer):
