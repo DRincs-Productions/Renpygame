@@ -427,7 +427,7 @@ class RenpyGameByTimerOnlyDraw(RenpyGameByTimer):
     def __init__(
         self,
         update_process: Callable[
-            [renpy.Render, float, float, Optional[float], int], Optional[float]
+            [renpy.Render, float, Optional[float], int], Optional[float]
         ],
         event_lambda: Optional[Callable[[EventType, int, int, float], Any]] = None,
         delay: float = 0.5,
@@ -446,6 +446,9 @@ class RenpyGameByTimerOnlyDraw(RenpyGameByTimer):
 
     def result_render(self, render: renpy.Render, width: int, height: int):
         return render
+
+    def _is_full_redraw(self, current_frame_number: int) -> bool:
+        return False
 
     # def _start_redraw_timer(
     #     self, delay: Optional[float] = None, check_game_end: bool = True
