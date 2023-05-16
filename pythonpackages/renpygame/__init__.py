@@ -29,7 +29,7 @@ draw = my_draw
 
 RenpyGameByTimer = my_RenpyGameByTimer
 RenpyGameByEvent = my_RenpyGameByEvent
-RenpyGameByTimerOnlyDraw = my_RenpyGameByTimerOnlyDraw
+RenpyGameByTimerForDraw = my_RenpyGameByTimerOnlyDraw
 RenpyGameByLoop = my_RenpyGameByLoop
 
 
