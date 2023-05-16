@@ -146,6 +146,7 @@ class RenpyGameByTimer(renpy.Displayable):
     ):
         self.first_step = first_step
         self.delay = None
+        self.last_delay = None
         self.start_delay = delay
         self.update_process = update_process
         self.event_lambda = event_lambda
@@ -351,10 +352,11 @@ class RenpyGameByTimer(renpy.Displayable):
         if 32768 == ev.type:  # 32768 is the event type for pause menu
             self.reset_game()
         if PYGAMEEVENT == ev.type:
-            if self.delay:
-                pygame.time.set_timer(PYGAMEEVENT, int(self.delay * 1000))
-            else:
+            if self.delay is None:
                 pygame.time.set_timer(PYGAMEEVENT, 0)
+            elif self.last_delay is None or self.delay != self.last_delay:
+                self.last_delay = self.delay
+                pygame.time.set_timer(PYGAMEEVENT, int(self.delay * 1000))
             if self.child_render is None:
                 renpy.redraw(self, 0)
             else:
