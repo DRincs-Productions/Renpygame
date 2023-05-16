@@ -155,8 +155,7 @@ class RenpyGameByTimer(renpy.Displayable):
         self.is_game_end = False
         self.end_game_frame = end_game_frame
         self.is_game_end_menu = False
-        if is_full_redraw:
-            self.is_full_redraw_lamda = is_full_redraw
+        self.is_full_redraw_lamda = is_full_redraw
 
         # renpy.Displayable init
         super(RenpyGameByTimer, self).__init__(**kwargs)
