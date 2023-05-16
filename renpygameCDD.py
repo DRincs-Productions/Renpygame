@@ -432,14 +432,17 @@ class RenpyGameByLoop(RenpyGameByTimer):
 class RenpyGameByTimerForDraw(RenpyGameByTimer):
     def __init__(
         self,
-        first_step: Callable[[int, int, float, float], Render],
         update_process: Callable[
-            [renpy.Render, float, Optional[float], int], Optional[float]
+            [Render, float, Optional[float], int], Optional[float]
         ],
         event_lambda: Optional[Callable[[EventType, int, int, float], Any]] = None,
         delay: float = 0.5,
         **kwargs,
     ):
+        first_step = lambda width, height, st, at: self._first_step_for_draw(
+            width, height
+        )
+
         # RenpyGameByTimer init
         super().__init__(
             first_step=first_step,
@@ -448,6 +451,15 @@ class RenpyGameByTimerForDraw(RenpyGameByTimer):
             delay=delay,
             **kwargs,
         )
+
+    def _first_step_for_draw(self, width: int, height: int):
+        renpy_render = renpy.Render(width, height)
+        pygame_render = Render(width, height)
+        pygame_render.internal_render = renpy_render
+        return pygame_render
+
+    def result_render(self, render: Render, width: int, height: int):
+        return render.internal_render
 
     def _is_full_redraw(self, current_frame_number: int) -> bool:
         return False
