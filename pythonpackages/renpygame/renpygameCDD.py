@@ -4,6 +4,7 @@ import renpy.exports as renpy
 
 import pythonpackages.renpygame as pygame
 from pythonpackages.renpygame.event import EventType
+from pythonpackages.renpygame.renpygameCanvas import Canvas
 from pythonpackages.renpygame.renpygameRender import Render
 
 # https://www.renpy.org/doc/html/cdd.html
@@ -134,7 +135,7 @@ class RenpyGameByTimer(renpy.Displayable):
         self,
         first_step: Callable[[int, int, float, float], Render],
         update_process: Callable[
-            [Render, float, Optional[float], int], Optional[float]
+            [Render, Canvas, float, Optional[float], int], Optional[float]
         ],
         event_lambda: Optional[Callable[[EventType, int, int, float], Any]] = None,
         delay: float = 0.05,
@@ -191,14 +192,14 @@ class RenpyGameByTimer(renpy.Displayable):
     @property
     def update_process(
         self,
-    ) -> Callable[[Render, float, Optional[float], int], Optional[float]]:
+    ) -> Callable[[Render, Canvas, float, Optional[float], int], Optional[float]]:
         """wiki: https://github.com/DRincs-Productions/Renpygame/wiki/Minigame-with-a-render-loop#first_step-and-update_process"""
         return self._update_process
 
     @update_process.setter
     def update_process(
         self,
-        value: Callable[[Render, float, Optional[float], int], Optional[float]],
+        value: Callable[[Render, Canvas, float, Optional[float], int], Optional[float]],
     ):
         self._update_process = value
 
@@ -320,7 +321,11 @@ class RenpyGameByTimer(renpy.Displayable):
             self.current_frame_number += 1
             # * first round and subsequent rounds
             self.delay = self.update_process(
-                self.child_render, st, self.delay, self.current_frame_number
+                self.child_render,
+                self.canvas,
+                st,
+                self.delay,
+                self.current_frame_number,
             )
 
         if self.current_frame_number % 3600 == 0:
@@ -329,6 +334,7 @@ class RenpyGameByTimer(renpy.Displayable):
     def render(self, width: int, height: int, st: float, at: float) -> renpy.Render:
         if self.child_render is None:  # * first round
             self.child_render = self.first_step(width, height, st, at)
+            self.canvas = self.child_render.canvas()
             self.current_frame_number = 0
         else:  # * first round and subsequent rounds
             self._render_update(st)
@@ -381,7 +387,7 @@ class RenpyGameByLoop(RenpyGameByTimer):
         self,
         first_step: Callable[[int, int, float, float], Render],
         update_process: Callable[
-            [Render, float, Optional[float], int], Optional[float]
+            [Render, Canvas, float, Optional[float], int], Optional[float]
         ],
         event_lambda: Optional[Callable[[EventType, int, int, float], Any]] = None,
         delay: float = 0.05,
@@ -429,7 +435,7 @@ class RenpyGameByTimerOnlyDraw(RenpyGameByTimer):
     def __init__(
         self,
         update_process: Callable[
-            [renpy.Render, float, Optional[float], int], Optional[float]
+            [renpy.Render, Canvas, float, Optional[float], int], Optional[float]
         ],
         event_lambda: Optional[Callable[[EventType, int, int, float], Any]] = None,
         delay: float = 0.5,
@@ -451,29 +457,3 @@ class RenpyGameByTimerOnlyDraw(RenpyGameByTimer):
 
     def _is_full_redraw(self, current_frame_number: int) -> bool:
         return False
-
-    # def _start_redraw_timer(
-    #     self, delay: Optional[float] = None, check_game_end: bool = True
-    # ):
-    #     """inspired by: https://github.com/renpy/renpy/blob/master/renpy/display/layout.py#L1503"""
-    #     if delay is None:
-    #         delay = self.delay
-    #     if self.delay is not None:
-    #         # renpy.redraw(self, delay)
-    #         print("Renpy Game Redraw")
-    #     elif check_game_end:
-    #         self.game_end()
-
-    # def lambda_update(self):
-    #     if not self.child_render:
-    #         self.child_render = self.first_step(0, 0, 0, 0)
-    #     return
-
-    # def show(self, show_and_start: bool = True):
-    #     print("Renpy Game Show")
-    #     if show_and_start:
-    #         self.start()
-    #     renpy.call_screen(
-    #         "renpygame_surface_lambda", surface=self, update_process=self.lambda_update
-    #     )
-    #     return
