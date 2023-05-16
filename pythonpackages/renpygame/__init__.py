@@ -5,7 +5,6 @@ import pythonpackages.renpygame.image as my_image
 import pythonpackages.renpygame.mixer as my_mixer
 import pythonpackages.renpygame.rect as my_rect
 import pythonpackages.renpygame.sprite as my_sprite
-from pythonpackages.renpygame.renpygameCanvas import Canvas as my_Canvas
 import pythonpackages.renpygame.transform as my_transform
 from pythonpackages.renpygame.renpygameCDD import (
     RenpyGameByEvent as my_RenpyGameByEvent,
@@ -17,7 +16,6 @@ from pythonpackages.renpygame.renpygameCDD import (
 )
 from pythonpackages.renpygame_pygame import *
 
-Canvas = my_Canvas
 Surface = my_display.Surface
 Rect = my_rect.Rect
 rect = my_rect
