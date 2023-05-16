@@ -432,6 +432,7 @@ class RenpyGameByLoop(RenpyGameByTimer):
 class RenpyGameByTimerOnlyDraw(RenpyGameByTimer):
     def __init__(
         self,
+        first_step: Callable[[int, int, float, float], Render],
         update_process: Callable[
             [renpy.Render, float, Optional[float], int], Optional[float]
         ],
@@ -439,8 +440,6 @@ class RenpyGameByTimerOnlyDraw(RenpyGameByTimer):
         delay: float = 0.5,
         **kwargs,
     ):
-        first_step = lambda width, height, st, at: renpy.Render(width, height)
-
         # RenpyGameByTimer init
         super().__init__(
             first_step=first_step,
