@@ -364,6 +364,7 @@ def my_game_first_step(width: int, height: int, st: float, at: float) -> pygame.
 
 def my_game_logic(
     cur_screen: pygame.Surface,
+    cur_canvas: pygame.Canvas,
     st: float,
     next_frame_time: Optional[float],
     current_frame_number: int,
