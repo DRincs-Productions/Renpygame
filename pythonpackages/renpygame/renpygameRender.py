@@ -1,3 +1,4 @@
+from typing import Optional
 import renpy.exports as renpy
 
 from pythonpackages.renpygame.renpygameCanvas import Canvas
@@ -322,11 +323,14 @@ class Render(renpy.Render):
     @property
     def renpygame_canvas(self) -> Canvas:
         if self._renpygame_canvas is None:
-            self._renpygame_canvas = self.canvas()
+            if self.internal_render is None:
+                self._renpygame_canvas = self.canvas()
+            else:
+                self._renpygame_canvas = self.internal_render.canvas()
         return self._renpygame_canvas
 
     @renpygame_canvas.setter
-    def renpygame_canvas(self, value: Canvas):
+    def renpygame_canvas(self, value: Optional[Canvas]):
         self._renpygame_canvas = value
 
     def get_width(self) -> int:
