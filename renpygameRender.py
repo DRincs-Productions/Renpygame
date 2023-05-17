@@ -255,6 +255,10 @@ class Render(renpy.Render):
         if self.internal_render:
             self.internal_render.fill(color)
 
+        # update the canvas
+        if self.renpygame_canvas:
+            self.renpygame_canvas = None
+            _ = self.renpygame_canvas
         return
 
     def canvas(self) -> Canvas:
