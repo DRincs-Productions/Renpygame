@@ -251,6 +251,10 @@ class Render(renpy.Render):
         # TODO use a self.background_render si not correct, because the color must blit over the current render and under the current render
         self.background_render = renpy.display.imagelike.Solid(color)
         # self.blit(surf, (0, 0), focus=False, main=False)
+
+        if self.internal_render:
+            self.internal_render.fill(color)
+
         return
 
     def canvas(self) -> Canvas:
