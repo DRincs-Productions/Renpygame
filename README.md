@@ -75,21 +75,21 @@ At the end make a merge inside the arm of the project.
 A good number of functions should already work even if they have not yet been tested
 
 - [ ] renpygame.color
-- [ ] renpygame.constants (Still to be tested, should already be working)
-- [ ] renpygame.cursors (Still to be tested, should already be working)
+- [x] renpygame.constants (Still to be tested, should already be working)
+- [x] renpygame.cursors (Still to be tested, should already be working)
 - [ ] renpygame.display (Incomplete)
 - [x] renpygame.display.Surface
-- [ ] renpygame.draw ( [In development](https://github.com/DRincs-Productions/Renpygame/issues/13) )
-- [ ] renpygame.event (Still to be tested, should already be working)
+- [x] renpygame.draw
+- [x] renpygame.event (Still to be tested, should already be working)
 - [ ] renpygame.font
 - [ ] renpygame.image (Incomplete)
 - [ ] renpygame.joystick
 - [ ] renpygame.key (Incomplete)
-- [ ] renpygame.locals (Still to be tested, should already be working)
+- [x] renpygame.locals (Still to be tested, should already be working)
 - [ ] renpygame.mixer (Incomplete)
 - [ ] renpygame.mixer.music (Incomplete)
-- [ ] renpygame.mouse (Still to be tested, should already be working)
+- [x] renpygame.mouse (Still to be tested, should already be working)
 - [x] renpygame.rect
 - [ ] renpygame.sprite (Incomplete)
-- [ ] renpygame.time (Still to be tested, should already be working)
+- [x] renpygame.time (Still to be tested, should already be working)
 - [ ] renpygame.transform (Incomplete)
