@@ -51,7 +51,7 @@ I recommend the following ways to include it in your project:
 
 - [**Pull branch**](#pull-branch) (to **insert** it into your game and **update** it easily)
 - [**Fork**](https://docs.github.com/en/get-started/quickstart/fork-a-repo) (to improve the repo or create a Toolkit based on mine)
-- [Manually](https://github.com/DRincs-Productions/DRincs-Productions/releases) (not recommended)
+- [Manually](https://github.com/DRincs-Productions/Renpygame/releases) (not recommended)
 
 ### Pull branch
 
