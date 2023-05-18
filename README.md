@@ -14,6 +14,14 @@ Use of events to draw limits a lot -> you can't create loops to update a renpy.D
 
 ![ezgif com-video-to-gif](https://user-images.githubusercontent.com/67595890/236701292-d36a5f0f-d4e8-4e53-8671-a79fd903786b.gif)
 
+## Other minigames
+
+(Add topics `renpygame` to add it to the list)    
+https://github.com/topics/renpygame
+
+## Instructions
+
+**[Wiki](https://github.com/DRincs-Productions/Renpygame/wiki)**
 
 ## Why use pygame-renpygame and not renpy-CDD?
 
@@ -36,9 +44,6 @@ renpy's pros:
 
 (I don't made any tests for now) Renpygame use [CDD](https://www.renpy.org/doc/html/cdd.html) for draw and renpy for open a file, but I use a typification and is a external library. So, the performance is the same as renpy, excluding possible implementation errors.
 
-## Instructions
-
-**[Wiki](https://github.com/DRincs-Productions/Renpygame/wiki)**
 
 ## Insert Toolkit in your project
 
