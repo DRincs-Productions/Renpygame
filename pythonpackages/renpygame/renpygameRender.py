@@ -1,8 +1,13 @@
+from typing import Optional
 import renpy.exports as renpy
+
+from pythonpackages.renpygame.renpygameCanvas import Canvas
 
 
 class Render(renpy.Render):
-    """https://github.com/renpy/renpy/blob/master/renpy/display/render.pyx#L586"""
+    """https://github.com/renpy/renpy/blob/master/renpy/display/render.pyx#L586
+    # TODO there is a problem a problem with self.width and self.height. They are a float and must be an int.
+    """
 
     def __init__(
         self,
@@ -13,7 +18,9 @@ class Render(renpy.Render):
         super().__init__(width, height)
         # * Render properties, will come set in super().__init__
 
-        self.renpygame_render = None
+        self.internal_render = None
+        self.background_render = None
+        self._renpygame_canvas = None
 
     @property
     def mark(self):
@@ -32,10 +39,25 @@ class Render(renpy.Render):
         """must be int"""
         return int(super().width)
 
+    @width.setter
+    def width(self, value: int):
+        """must be int.
+        # TODO there is a problem a problem with self.width and self.height. They are a float and must be an int.
+        """
+        super().width = int(value)
+
     @property
     def height(self) -> int:
         """must be int"""
         return int(super().height)
+
+    @height.setter
+    def height(self, value: int):
+        """must be int.
+        # TODO there is a problem a problem with self.width and self.height. They are a float and must be an int.
+        """
+        super().height = int(value)
+        print("height set to", value)
 
     @property
     def layer_name(self):
@@ -165,8 +187,13 @@ class Render(renpy.Render):
         self, source, pos: tuple[int, int], focus=True, main=True, index=None
     ) -> int:
         """render.blit(): https://github.com/renpy/renpy/blob/master/renpy/display/render.pyx#L778"""
-        if hasattr(source, "renpygame_render") and source.renpygame_render:
-            source = source.renpygame_render
+        if hasattr(source, "background_render") and source.background_render:
+            surffill = renpy.render(
+                source.background_render, source.width, source.height, 0, 0
+            )
+            super().blit(surffill, pos, focus, main, index)
+        if hasattr(source, "internal_render") and source.internal_render:
+            source = source.internal_render
         return super().blit(source, pos, focus, main, index)
 
     def subpixel_blit(
@@ -217,10 +244,32 @@ class Render(renpy.Render):
         return super().is_pixel_opaque(x, y)
 
     def fill(self, color):
-        return super().fill(color)
+        """https://github.com/renpy/renpy/blob/master/renpy/display/render.pyx#L1469
+        # TODO there is a problem a problem with self.width and self.height. They are a float and must be an int. so I have overriden this method
+        """
+        color = renpy.easy.color(color)
+        # TODO use a self.background_render si not correct, because the color must blit over the current render and under the current render
+        self.background_render = renpy.display.imagelike.Solid(color)
+        # self.blit(surf, (0, 0), focus=False, main=False)
 
-    def canvas(self):
-        return super().canvas()
+        if self.internal_render:
+            self.internal_render.fill(color)
+
+        # update the canvas
+        if self.renpygame_canvas:
+            self.renpygame_canvas = None
+            _ = self.renpygame_canvas
+        return
+
+    def canvas(self) -> Canvas:
+        """https://github.com/renpy/renpy/blob/master/renpy/display/render.pyx#L1480
+        # TODO there is a problem a problem with self.width and self.height. They are a float and must be an int. so I have overriden this method
+        """
+        surf = renpy.display.pgrender.surface((self.width, self.height), True)
+        renpy.display.draw.mutated_surface(surf)
+        self.blit(surf, (0, 0))
+        canvas = renpy.display.render.Canvas(surf)
+        return canvas
 
     def screen_rect(self, sx: float, sy: float, transform: list[list[int]]):
         return super().screen_rect(sx, sy, transform)
@@ -254,16 +303,43 @@ class Render(renpy.Render):
     # my methods
 
     @property
-    def renpygame_render(self) -> renpy.Render:
+    def internal_render(self) -> renpy.Render:
         """if set will be used during blit() instead of using the parent class.
-        This is used during conversions and is useful to prevent errors.
+        This is used for conversions and is useful to prevent errors.
+        and because if you use a r = renpy.render() and then self.blit(r) it will not work -> when you blit the self(render) into main render it will not work
         # TODO: instead of using this variable during the conversion, one could set all the variables to the old element in the new
         """
-        return self._original_render
+        return self._internal_render
 
-    @renpygame_render.setter
-    def renpygame_render(self, value: renpy.Render):
-        self._original_render = value
+    @internal_render.setter
+    def internal_render(self, value: renpy.Render):
+        self._internal_render = value
+
+    @property
+    def background_render(self) -> renpy.display.imagelike.Solid:
+        """if set will be used as the background render when the parent render blit it.
+        This is used for conversions and is useful to prevent errors.
+        and because if you use a r = renpy.render() and then self.blit(r) it will not work -> when you blit the self(render) into main render it will not work
+        # TODO: instead of using this variable during the conversion, one could set all the variables to the old element in the new
+        """
+        return self._background_render
+
+    @background_render.setter
+    def background_render(self, value: renpy.display.imagelike.Solid):
+        self._background_render = value
+
+    @property
+    def renpygame_canvas(self) -> Canvas:
+        if self._renpygame_canvas is None:
+            if self.internal_render is None:
+                self._renpygame_canvas = self.canvas()
+            else:
+                self._renpygame_canvas = self.internal_render.canvas()
+        return self._renpygame_canvas
+
+    @renpygame_canvas.setter
+    def renpygame_canvas(self, value: Optional[Canvas]):
+        self._renpygame_canvas = value
 
     def get_width(self) -> int:
         width, _ = self.get_size()

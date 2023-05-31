@@ -59,7 +59,7 @@ class Surface(Render):
         return self.internal_surface.copy()
 
     def fill(self, color, rect=None, special_flags=0):
-        self.internal_surface.fill(color, rect, special_flags)
+        # self.internal_surface.fill(color, rect, special_flags)
         return super().fill(color)
 
     def scroll(self, dx: int = 0, dy: int = 0):

@@ -70,10 +70,8 @@ class Image(renpy.display.im.Image):
         surface = Surface(self.size)
         render = renpy.render(self, self.width, self.height, st, at)
         surface.blit(render, (0, 0))
-        # * IMPORTANT: into convert is veri inportant set renpygame_render
-        #   -> because so in blit I can use the pygame_render
-        #   -> because if I use surface the image in not visible if is not blit into current st and at
-        surface.renpygame_render = render
+        # TODO: try use olther methods
+        surface.internal_render = render
         return surface
 
 
