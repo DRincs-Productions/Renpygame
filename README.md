@@ -4,6 +4,16 @@
 
 ----
 
+## TO DOWNLOAD THIS PROJECT
+```shell
+# Basic command to download projects from git
+git clone https://github.com/DRincs-Productions/Renpygame
+# IMPORTANT -> Will add the libraries needed to run the program
+cd Renpygame
+git submodule update --remote
+```
+----
+
 Renpygame is a framework that allows pygame games to be integrated with Ren'Py. It's intended for people who are capable programmers.
 
 The idea is to create a library that uses [pygame_sdl2](https://github.com/renpy/pygame_sdl2) and overrides functions that can be handled by the [renpy](https://github.com/renpy/renpy) library.
