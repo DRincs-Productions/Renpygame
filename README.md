@@ -4,7 +4,7 @@
 
 ----
 
-## TO DOWNLOAD THIS PROJECT
+## TO DOWNLOAD THIS TEST PROJECT
 ```shell
 # Basic command to download projects from git
 git clone https://github.com/DRincs-Productions/Renpygame
