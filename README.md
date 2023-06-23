@@ -10,7 +10,7 @@
 git clone https://github.com/DRincs-Productions/Renpygame
 # IMPORTANT -> Will add the libraries needed to run the program
 cd Renpygame
-git submodule update --remote
+git submodule update --init --recursive
 
 ```
 ----
