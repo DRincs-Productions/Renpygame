@@ -300,31 +300,31 @@ def my_game_first_step(width: int, height: int, st: float, at: float) -> pygame.
 
     # Load images, assign to sprite classes
     # (do this before the classes are used, after screen setup)
-    img = pygame.image.load("player1.gif")
+    img = pygame.image.load("player1.webp")
     img_flip = pygame.transform.flip(img, 1, 0)
     img = img.convert(st, at)
     img_flip = img_flip.convert(st, at)
     Player.images = [img, img_flip]
-    img = pygame.image.load("explosion1.gif")
+    img = pygame.image.load("explosion1.webp")
     img_flip = pygame.transform.flip(img, 1, 0)
     img = img.convert(st, at)
     img_flip = img_flip.convert(st, at)
     Explosion.images = [img, img_flip]
     Alien.images = [
-        pygame.image.load("alien1.gif").convert(st, at),
-        pygame.image.load("alien2.gif").convert(st, at),
-        pygame.image.load("alien3.gif").convert(st, at),
+        pygame.image.load("alien1.webp").convert(st, at),
+        pygame.image.load("alien2.webp").convert(st, at),
+        pygame.image.load("alien3.webp").convert(st, at),
     ]
-    Bomb.images = [pygame.image.load("bomb.gif").convert(st, at)]
-    Shot.images = [pygame.image.load("shot.gif").convert(st, at)]
+    Bomb.images = [pygame.image.load("bomb.webp").convert(st, at)]
+    Shot.images = [pygame.image.load("shot.webp").convert(st, at)]
 
     # decorate the game window
-    pygame.display.set_icon(pygame.image.load("alien1.gif").pygame_image)
+    pygame.display.set_icon(pygame.image.load("alien1.webp").pygame_image)
     pygame.display.set_caption("Pygame Aliens")
     pygame.mouse.set_visible(0)
 
     # create the background, tile the bgd image
-    bgdtile = pygame.image.load("background.gif")
+    bgdtile = pygame.image.load("background.webp")
     bgdtile = bgdtile.convert(st, at)
     sh.background = pygame.Surface(SCREENRECT.size)
     for x in range(0, SCREENRECT.width, bgdtile.get_width()):
