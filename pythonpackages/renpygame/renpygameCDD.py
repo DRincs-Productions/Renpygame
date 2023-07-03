@@ -40,7 +40,10 @@ class RenpyGameByEvent(renpy.Displayable):
     def __init__(
         self,
         render_lambda: Callable[[int, int, float, float], Render],
-        event_lambda: Callable[[EventType, int, int, float], Any],
+        event_lambda: Callable[
+            [EventType, int, int, float, Callable[[int], None]], Any
+        ],
+        redraw_lambda: Optional[Callable[[Render, float, float], None]] = None,
         **kwargs,
     ):
         # renpy.Displayable init
@@ -48,21 +51,33 @@ class RenpyGameByEvent(renpy.Displayable):
 
         self.render_lambda = render_lambda
         self.event_lambda = event_lambda
+        self.redraw_lambda = redraw_lambda
         self.child_render = None
 
     def render(self, width: int, height: int, st: float, at: float) -> renpy.Render:
         """https://github.com/renpy/renpy/blob/master/renpy/display/render.pyx#L170"""
         # if is first time rendering
-        print("rendering RenpyGameDisplayable")
         if self.child_render is None:
             self.child_render = self.render_lambda(width, height, st, at)
+        else:
+            if self.redraw_lambda is not None:
+                self.redraw_lambda(self.child_render, st, at)
         return main_render(self.child_render, width, height)
 
     def event(self, ev: EventType, x: int, y: int, st: float):
         """keys: https://www.pygame.org/docs/ref/key.html#key-constants-label
         pygame_sdl2: https://github.com/renpy/pygame_sdl2/blob/master/src/pygame_sdl2/event.pyx
         """
-        return self.event_lambda(ev, x, y, st)
+        return self.event_lambda(ev, x, y, st, self.redraw)
+
+    def show(self):
+        """wiki: https://github.com/DRincs-Productions/Renpygame/wiki/Minigame-with-a-render-loop#start-a-game-between-a-sterted-menu"""
+        print("Renpy Game Show")
+        renpy.call_screen("renpygame_surface", surface=self)
+        return
+
+    def redraw(self, delay: int):
+        renpy.redraw(self, delay)
 
     @property
     def render_lambda(self) -> Callable[[int, int, float, float], Render]:
