@@ -157,7 +157,7 @@ class Score(pygame.sprite.Sprite):
             # self.image = self.font.render(msg, 0, self.color)
 
 
-class SharedDataAlienGame:
+class SharedData:
     def __init__(self):
         self.all = None
         self.player = None
@@ -230,7 +230,7 @@ class SharedDataAlienGame:
         self._shots = value
 
 
-sh = SharedDataAlienGame()
+sh = SharedData()
 # Create Some Starting Values
 kills = 0
 clock = pygame.time.Clock()
@@ -241,7 +241,7 @@ def main():
     global sh
 
     if not sh:
-        sh = SharedDataAlienGame()
+        sh = SharedData()
 
     # Initialize a game
     displayable_with_logic = pygame.RenpyGameByLoop(
@@ -267,7 +267,7 @@ def mainByTimer():
     global sh
 
     if not sh:
-        sh = SharedDataAlienGame()
+        sh = SharedData()
 
     # Initialize a game
     displayable_with_logic = pygame.RenpyGameByTimer(
