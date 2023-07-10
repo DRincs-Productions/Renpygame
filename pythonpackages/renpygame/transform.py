@@ -4,7 +4,13 @@ import renpy.exports as renpy
 
 from pythonpackages.renpygame_pygame.transform import *
 from pythonpackages.renpygame.display import Surface
-from pythonpackages.renpygame.image import Flip, Image, Rotozoom, Scale
+from pythonpackages.renpygame.image import (
+    Flip,
+    Grayscale,
+    Image,
+    Rotozoom,
+    Scale,
+)
 
 # https://www.renpy.org/doc/html/displayables.html
 
@@ -50,10 +56,12 @@ def scale_by(surface, factor, dest_surface=None) -> Surface:
     return surface
 
 
-def rotate(surface, angle) -> Surface:
+def rotate(surface: Image, angle: int) -> Image:
     """pygame: https://www.pygame.org/docs/ref/transform.html#pygame.transform.rotate"""
-    print("renpygame.transform.rotate: not implemented yet")
-    # TODO: implement
+    if isinstance(surface, Image):
+        surface.rotate = angle
+    else:
+        print_error(surface, "renpygame.transform.rotate")
     return surface
 
 
@@ -108,11 +116,11 @@ def average_surfaces(surfaces, dest_surface=None, palette_colors=1) -> Surface:
     return surfaces
 
 
-def grayscale(surface, dest_surface=None) -> Surface:
+def grayscale(surface, dest_surface=None) -> Image:
     """pygame: https://www.pygame.org/docs/ref/transform.html#pygame.transform.grayscale
     renpy: https://github.com/renpy/renpy/blob/master/renpy/display/im.py#L1792"""
     if isinstance(surface, Image):
-        surface = renpy.display.im.Grayscale(surface)
+        surface = Grayscale(surface)
     else:
         print_error(surface, "renpygame.transform.grayscale")
     return surface
