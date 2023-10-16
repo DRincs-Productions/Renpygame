@@ -9,6 +9,7 @@ from pythonpackages.renpygame.renpygameRender import Render
 # https://www.renpy.org/doc/html/cdd.html
 
 PYGAMEEVENT = 6828
+PYGAMEENDEVENT = 9873
 
 
 def main_render(
@@ -68,6 +69,11 @@ class RenpyGameByEvent(renpy.Displayable):
         """keys: https://www.pygame.org/docs/ref/key.html#key-constants-label
         pygame_sdl2: https://github.com/renpy/pygame_sdl2/blob/master/src/pygame_sdl2/event.pyx
         """
+        if PYGAMEENDEVENT == ev.type:  # 32768 is the event type for pause menu
+            print("Renpy Game End")
+            renpy.free_memory()
+            pygame.time.set_timer(PYGAMEEVENT, 0)
+            return 0
         return self.event_lambda(ev, x, y, st, self.redraw)
 
     def show(self):
