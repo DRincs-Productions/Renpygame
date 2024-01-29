@@ -48,6 +48,7 @@ pygame-renpygame's pros:
 renpy's pros:
 
 - durability ([CDD](https://www.renpy.org/doc/html/cdd.html) is developed by the same developer as renpy)
+- you can create simple and effective effects on images thanks to [Transforms](https://www.renpy.org/doc/html/transforms.html) (in the future it could also be integrated into Renpygame)
 
 ## Performance
 
